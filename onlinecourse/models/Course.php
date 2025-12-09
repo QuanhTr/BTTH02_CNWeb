@@ -54,4 +54,32 @@ class Course {
         $stmt->bindValue(':id',$id);
         return $stmt->execute();
     }
+
+    /* --------------------------------
+        THỐNG KÊ KHÓA HỌC
+--------------------------------- */
+
+public function countCourses() {
+    $sql = "SELECT COUNT(*) AS total FROM courses";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+}
+
+public function countActiveCourses() {
+    $sql = "SELECT COUNT(*) AS total FROM courses";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+}
+
+public function countInactiveCourses() {
+    return 0; // Bảng không có cột role
+}
+
+public function countPendingCourses() {
+    return 0; // Bảng không có cột status
+}
+
+
 }

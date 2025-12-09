@@ -14,7 +14,7 @@ class User {
         ĐĂNG KÝ
     ------------------------------ */
     public function register($username,$email,$password,$fullname,$role=0) {
-        $sql = "INSERT INTO $this->table (username,email,password,fullname,role,active)
+        $sql = "INSERT INTO $this->table (username,email,password,fullname,role)
                 VALUES (:username,:email,:password,:fullname,:role,1)";
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([
@@ -39,9 +39,8 @@ class User {
 
         if (!$user) return false;
 
-        // Check active
-        if ($user['active'] == 0) {
-            return "inactive"; // để controller xử lý
+        if ($user['role'] == 0) {
+            return "inactive";
         }
 
         if (password_verify($password,$user['password'])) {
@@ -61,7 +60,7 @@ class User {
     }
 
     /* -----------------------------
-        LẤY DANH SÁCH USER
+        LẤY TẤT CẢ USER
     ------------------------------ */
     public function getAllUsers() {
         $sql = "SELECT * FROM $this->table ORDER BY id DESC";
@@ -69,7 +68,7 @@ class User {
     }
 
     /* -----------------------------
-        CẬP NHẬT THÔNG TIN USER
+        CẬP NHẬT USER
     ------------------------------ */
     public function updateUser($id,$fullname,$email) {
         $sql = "UPDATE $this->table 
@@ -88,6 +87,7 @@ class User {
     ------------------------------ */
     public function changePassword($id,$oldPass,$newPass) {
         $user = $this->getUserById($id);
+
         if(!$user || !password_verify($oldPass,$user['password'])) return false;
 
         $sql = "UPDATE $this->table
@@ -111,7 +111,7 @@ class User {
     }
 
     /* -----------------------------
-        BẬT / TẮT USER (Admin)
+        BẬT / TẮT USER
     ------------------------------ */
     public function toggleActive($id) {
         $user = $this->getUserById($id);
@@ -128,23 +128,29 @@ class User {
     }
 
     /* -----------------------------
-        THỐNG KÊ USER
+        THỐNG KÊ — STATIC
     ------------------------------ */
 
     public function countAllUsers() {
-        $sql = "SELECT COUNT(*) FROM $this->table";
-        return $this->conn->query($sql)->fetchColumn();
-    }
+    $sql = "SELECT COUNT(*) AS total FROM users";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+}
 
-    public function countActiveUsers() {
-        $sql = "SELECT COUNT(*) FROM $this->table WHERE active = 1";
-        return $this->conn->query($sql)->fetchColumn();
-    }
+public function countActiveUsers() {
+    $sql = "SELECT COUNT(*) AS total FROM users WHERE role = 1";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+}
 
-    public function countInactiveUsers() {
-        $sql = "SELECT COUNT(*) FROM $this->table WHERE active = 0";
-        return $this->conn->query($sql)->fetchColumn();
-    }
+public function countInactiveUsers() {
+    $sql = "SELECT COUNT(*) AS total FROM users WHERE role = 0";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+}
 
     /* -----------------------------
         XÓA USER
@@ -154,4 +160,5 @@ class User {
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([':id'=>$id]);
     }
+
 }
