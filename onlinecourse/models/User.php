@@ -11,18 +11,18 @@ class User {
     }
 
     /* -----------------------------
-        ĐĂNG KÝ TÀI KHOẢN
+        ĐĂNG KÝ
     ------------------------------ */
     public function register($username,$email,$password,$fullname,$role=0) {
-        $sql = "INSERT INTO $this->table (username,email,password,fullname,role)
-                VALUES (:username,:email,:password,:fullname,:role)";
+        $sql = "INSERT INTO $this->table (username,email,password,fullname,role,active)
+                VALUES (:username,:email,:password,:fullname,:role,1)";
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([
             ':username' => $username,
-            ':email' => $email,
+            ':email'    => $email,
             ':password' => password_hash($password,PASSWORD_DEFAULT),
             ':fullname' => $fullname,
-            ':role' => $role
+            ':role'     => $role
         ]);
     }
 
@@ -34,17 +34,24 @@ class User {
                 WHERE username=:ue OR email=:ue LIMIT 1";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([':ue'=>$usernameOrEmail]);
+
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Bỏ kiểm tra active
-        if($user && password_verify($password,$user['password'])) {
+        if (!$user) return false;
+
+        // Check active
+        if ($user['active'] == 0) {
+            return "inactive"; // để controller xử lý
+        }
+
+        if (password_verify($password,$user['password'])) {
             return $user;
         }
         return false;
     }
 
     /* -----------------------------
-        LẤY USER THEO ID
+        LẤY 1 USER
     ------------------------------ */
     public function getUserById($id) {
         $sql = "SELECT * FROM $this->table WHERE id=:id";
@@ -54,7 +61,7 @@ class User {
     }
 
     /* -----------------------------
-        LẤY TẤT CẢ USER
+        LẤY DANH SÁCH USER
     ------------------------------ */
     public function getAllUsers() {
         $sql = "SELECT * FROM $this->table ORDER BY id DESC";
@@ -81,7 +88,6 @@ class User {
     ------------------------------ */
     public function changePassword($id,$oldPass,$newPass) {
         $user = $this->getUserById($id);
-
         if(!$user || !password_verify($oldPass,$user['password'])) return false;
 
         $sql = "UPDATE $this->table
@@ -96,7 +102,7 @@ class User {
     }
 
     /* -----------------------------
-        PHÂN QUYỀN USER
+        CẬP NHẬT ROLE
     ------------------------------ */
     public function updateRole($id,$role) {
         $sql = "UPDATE $this->table SET role=:role WHERE id=:id";
@@ -105,10 +111,40 @@ class User {
     }
 
     /* -----------------------------
-        (ĐÃ XOÁ – KHÔNG CẦN ACTIVE)
+        BẬT / TẮT USER (Admin)
+    ------------------------------ */
+    public function toggleActive($id) {
+        $user = $this->getUserById($id);
+        if (!$user) return false;
+
+        $newActive = $user['active'] ? 0 : 1;
+
+        $sql = "UPDATE $this->table SET active=:active WHERE id=:id";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            ':active' => $newActive,
+            ':id' => $id
+        ]);
+    }
+
+    /* -----------------------------
+        THỐNG KÊ USER
     ------------------------------ */
 
-    // public function toggleActive($id) {}
+    public function countAllUsers() {
+        $sql = "SELECT COUNT(*) FROM $this->table";
+        return $this->conn->query($sql)->fetchColumn();
+    }
+
+    public function countActiveUsers() {
+        $sql = "SELECT COUNT(*) FROM $this->table WHERE active = 1";
+        return $this->conn->query($sql)->fetchColumn();
+    }
+
+    public function countInactiveUsers() {
+        $sql = "SELECT COUNT(*) FROM $this->table WHERE active = 0";
+        return $this->conn->query($sql)->fetchColumn();
+    }
 
     /* -----------------------------
         XÓA USER
