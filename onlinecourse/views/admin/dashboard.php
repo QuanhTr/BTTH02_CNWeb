@@ -121,7 +121,7 @@
             <div class="stat-card accent-orange">
                 <div class="stat-title">Khóa học chờ duyệt</div>
                 <div class="stat-value"><?= $pendingCourses ?></div>
-                <a href="index.php?controller=admin&action=approveCourses" class="btn btn-outline-warning stat-btn">
+                <a href="index.php?controller=admin&action=pendingCourses" class="btn btn-outline-warning stat-btn">
                     Xem danh sách
                 </a>
                 <i class="bi bi-hourglass-split stat-icon"></i>

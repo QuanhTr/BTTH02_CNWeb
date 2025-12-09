@@ -55,6 +55,13 @@ class Course {
         return $stmt->execute();
     }
 
+    // Lấy danh sách khóa học đang chờ duyệt
+    public function getPending() {
+        $stmt = $this->conn->prepare("SELECT * FROM courses WHERE status = 'pending'");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     /* --------------------------------
         THỐNG KÊ KHÓA HỌC
 --------------------------------- */

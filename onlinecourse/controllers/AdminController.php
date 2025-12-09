@@ -156,8 +156,11 @@ class AdminController {
     // 4. DUYỆT KHÓA HỌC
     // ============================================================
     public function pendingCourses() {
-        $courses = $this->courseModel->getPending();
-        include "views/admin/courses/pending.php";
+        // Gọi phương thức getPending từ model
+        $pendingCourses = $this->courseModel->getPending();
+
+        // Load view hiển thị
+        require_once 'views/admin/pending_courses.php';
     }
 
     public function approveCourse() {
