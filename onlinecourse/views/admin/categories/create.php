@@ -1,11 +1,36 @@
-<h2>Thêm danh mục mới</h2>
+<?php include "views/layouts/header.php"; ?>
 
-<form method="post" action="index.php?controller=category&action=store">
-    <label>Tên danh mục:</label><br>
-    <input type="text" name="name" required><br><br>
+<div class="container mt-4">
+    <h2>Danh mục khóa học</h2>
+    <a href="index.php?controller=admin&action=addCategory" class="btn btn-primary mb-3">+ Thêm danh mục</a>
+    <hr>
 
-    <label>Mô tả:</label><br>
-    <textarea name="description"></textarea><br><br>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên danh mục</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
 
-    <button type="submit">Lưu</button>
-</form>
+        <tbody>
+            <?php foreach ($categories as $c): ?>
+                <tr>
+                    <td><?= $c['id'] ?></td>
+                    <td><?= $c['name'] ?></td>
+                    <td>
+                        <a href="index.php?controller=admin&action=deleteCategory&id=<?= $c['id'] ?>"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Bạn chắc chắn xóa?');">
+                           Xóa
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
+</div>
+
+<?php include "views/layouts/footer.php"; ?>
