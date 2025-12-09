@@ -85,6 +85,7 @@
     .accent-orange { --gradient: linear-gradient(135deg, #f6d365, #fda085); }
 </style>
 
+<div class="content">  
 <div class="container mt-4">
 
     <h2 class="dashboard-title">📊 Dashboard Quản Trị</h2>
@@ -129,5 +130,5 @@
 
     </div>
 </div>
-
+</div>
 <?php include __DIR__ . "/../layouts/footer.php"; ?>

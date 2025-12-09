@@ -1,7 +1,16 @@
 <?php include __DIR__ . "/../../layouts/header.php"; ?>
 <?php include __DIR__ . "/../../layouts/sidebar.php"; ?>
 
-<div class="container mt-4">
+<style>
+    .content-wrapper {
+    margin-left: 260px;
+    padding: 20px;
+}
+
+</style>
+
+<div class="content-wrapper container mt-4">
+
     <h2>Quản lý người dùng</h2>
     <hr>
 

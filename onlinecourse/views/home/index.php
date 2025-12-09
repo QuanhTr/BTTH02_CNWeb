@@ -47,8 +47,7 @@
 </style>
 
 <div class="home-container">
-    <h2>Online Course System</h2>
-    <p>Chào mừng bạn đến với hệ thống khóa học trực tuyến.</p>
+    <h2>Chào mừng bạn đến với hệ thống khóa học trực tuyến.</h2>
 
     <?php if (!isset($_SESSION['user'])): ?>
         <a href="index.php?controller=auth&action=login">Đăng nhập</a>

@@ -3,3 +3,6 @@ table { border-collapse: collapse; width: 100%; }
 th, td { padding: 8px; border: 1px solid #ccc; }
 a { text-decoration: none; color: blue; }
 a:hover { text-decoration: underline; }
+.container {
+    margin-left: 260px !important; /* cùng width với sidebar */
+}

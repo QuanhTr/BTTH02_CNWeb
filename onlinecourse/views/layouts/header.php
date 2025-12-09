@@ -1,3 +1,15 @@
+<style>
+    header {
+    margin: 0 auto;       /* căn giữa theo chiều ngang */
+    padding: 15px 20px;
+    background: #fff;
+    position: relative;
+    z-index: 10;
+    text-align: center;   /* căn giữa nội dung bên trong header */
+    max-width: 1000px;   
+}
+</style>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
