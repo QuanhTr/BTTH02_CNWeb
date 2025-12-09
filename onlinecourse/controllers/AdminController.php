@@ -21,10 +21,12 @@ class AdminController {
     // 1. DASHBOARD
     // ============================================================
     public function dashboard() {
+        $userCount      = $this->userModel->countAllUsers(); 
         $totalUsers     = $this->userModel->countAllUsers();
         $totalActive    = $this->userModel->countActiveUsers();
         $totalInactive  = $this->userModel->countInactiveUsers();
-
+        
+         $courseCount    = $this->courseModel->countCourses();  
         $totalCourses   = $this->courseModel->countCourses();
         $pendingCourses = $this->courseModel->countPendingCourses();
 

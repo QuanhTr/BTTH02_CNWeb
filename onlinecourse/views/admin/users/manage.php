@@ -12,8 +12,7 @@
                 <th>Họ tên</th>
                 <th>Email</th>
                 <th>Vai trò</th>
-                <th>Trạng thái</th>
-                <th>Hành động</th>
+                
             </tr>
         </thead>
 
@@ -28,18 +27,6 @@
                         echo ($u['role'] == 2) ? "Quản trị" :
                              ($u['role'] == 1 ? "Giảng viên" : "Học viên");
                         ?>
-                    </td>
-
-                    <td>
-                        <?= $u['active'] ? "<span class='badge bg-success'>Hoạt động</span>" :
-                                           "<span class='badge bg-secondary'>Vô hiệu</span>" ?>
-                    </td>
-
-                    <td>
-                        <a href="index.php?controller=admin&action=toggleUser&id=<?= $u['id'] ?>" 
-                           class="btn btn-sm btn-warning">
-                           Đổi trạng thái
-                        </a>
                     </td>
                 </tr>
             <?php endforeach; ?>
