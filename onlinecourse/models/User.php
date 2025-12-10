@@ -13,18 +13,24 @@ class User {
     /* -----------------------------
         ĐĂNG KÝ
     ------------------------------ */
-    public function register($username,$email,$password,$fullname,$role=0) {
-        $sql = "INSERT INTO $this->table (username,email,password,fullname,role)
-                VALUES (:username,:email,:password,:fullname,:role,1)";
-        $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([
-            ':username' => $username,
-            ':email'    => $email,
-            ':password' => password_hash($password,PASSWORD_DEFAULT),
-            ':fullname' => $fullname,
-            ':role'     => $role
-        ]);
-    }
+   public function register($username, $email, $password, $fullname, $role = 0)
+{
+    $sql = "INSERT INTO $this->table 
+            (username, email, password, fullname, role, created_at)
+            VALUES (:username, :email, :password, :fullname, :role, :created_at)";
+
+    $stmt = $this->conn->prepare($sql);
+
+    return $stmt->execute([
+        ':username'   => $username,
+        ':email'      => $email,
+        ':password'   => password_hash($password, PASSWORD_DEFAULT),
+        ':fullname'   => $fullname,
+        ':role'       => $role,
+        ':created_at' => date('Y-m-d H:i:s')
+    ]);
+}
+
 
     /* -----------------------------
         ĐĂNG NHẬP
@@ -38,10 +44,6 @@ class User {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$user) return false;
-
-        if ($user['role'] == 0) {
-            return "inactive";
-        }
 
         if (password_verify($password,$user['password'])) {
             return $user;

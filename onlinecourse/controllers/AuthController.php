@@ -6,45 +6,58 @@ class AuthController {
 
     public function __construct() {
         $this->userModel = new User();
-        if(session_status()===PHP_SESSION_NONE){
+        if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
     }
 
     // Trang login
     public function login() {
-        if($_SERVER['REQUEST_METHOD']==='POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
             $usernameOrEmail = $_POST['username_email'];
             $password = $_POST['password'];
-            $user = $this->userModel->login($usernameOrEmail,$password);
-            if($user){
+
+            // Lấy user từ model
+            $user = $this->userModel->login($usernameOrEmail, $password);
+
+            // ❗ Sửa lỗi: Đảm bảo $user là array và có key password
+            if (is_array($user) && isset($user['password']) && password_verify($password, $user['password'])) {
+
+                // Lưu session
                 $_SESSION['user'] = [
-                    'id' => $user['id'],
+                    'id'       => $user['id'],
                     'fullname' => $user['fullname'],
-                    'role' => $user['role']
+                    'role'     => $user['role']
                 ];
 
-                header("Location:index.php");
+                header("Location: index.php");
                 exit;
-            } else {
-                $error = "Sai tài khoản hoặc mật khẩu!";
             }
+
+            // Nếu sai
+            $error = "Sai tài khoản hoặc mật khẩu!";
         }
+
         include "views/auth/login.php";
     }
 
-    // Trang register
+    // Đăng ký
     public function register() {
-        if($_SERVER['REQUEST_METHOD']==='POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
             $username = $_POST['username'];
-            $email = $_POST['email'];
+            $email    = $_POST['email'];
             $password = $_POST['password'];
             $fullname = $_POST['fullname'];
-            $role = $_POST['role'] ?? 0; // default học viên
-            $this->userModel->register($username,$email,$password,$fullname,$role);
-            header("Location:index.php?controller=auth&action=login");
+            $role     = $_POST['role'] ?? 0;
+
+            $this->userModel->register($username, $email, $password, $fullname, $role);
+
+            header("Location: index.php?controller=auth&action=login");
             exit;
         }
+
         include "views/auth/register.php";
     }
 
@@ -55,13 +68,18 @@ class AuthController {
         exit;
     }
 
-    // Profile
+    // Trang profile
     public function profile() {
-        if(!isset($_SESSION['user_id'])){
+
+        // ❗ Sửa lỗi: bạn đang dùng $_SESSION['user'], không phải user_id
+        if (!isset($_SESSION['user'])) {
             header("Location:index.php?controller=auth&action=login");
             exit;
         }
-        $user = $this->userModel->getUserById($_SESSION['user_id']);
+
+        $userId = $_SESSION['user']['id'];
+        $user = $this->userModel->getUserById($userId);
+
         include "views/auth/profile.php";
     }
 }
