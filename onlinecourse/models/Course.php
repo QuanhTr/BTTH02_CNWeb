@@ -57,10 +57,24 @@ class Course {
 
     // Lấy danh sách khóa học đang chờ duyệt
     public function getPending() {
-        $stmt = $this->conn->prepare("SELECT * FROM courses WHERE status = 'pending'");
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    $stmt = $this->conn->prepare("SELECT * FROM courses WHERE status = 0");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+public function updateStatus($id, $status) {
+    $stmt = $this->conn->prepare("UPDATE courses SET status = :status WHERE id = :id");
+    return $stmt->execute([
+        ':status' => $status,
+        ':id' => $id
+    ]);
+}
+
+public function deleteCourse($id) {
+    $stmt = $this->conn->prepare("DELETE FROM courses WHERE id = :id");
+    return $stmt->execute([':id' => $id]);
+}
+
 
     /* --------------------------------
         THỐNG KÊ KHÓA HỌC
@@ -85,8 +99,11 @@ public function countInactiveCourses() {
 }
 
 public function countPendingCourses() {
-    return 0; // Bảng không có cột status
+    $stmt = $this->conn->prepare("SELECT COUNT(*) AS total FROM courses WHERE status = 0");
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 }
+
 
 
 }

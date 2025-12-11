@@ -52,6 +52,8 @@ switch ($controller) {
         if ($action == "search") $ctrl->search();
         break;
 
+        
+
     // ================= DEFAULT =================
     default:
         die("Controller $controller không tồn tại!");
