@@ -39,4 +39,11 @@ class Category {
         $st = $this->conn->prepare($sql);
         return $st->execute([':id'=>$id]);
     }
+
+     public function getAllCategories() {
+        $sql = "SELECT * FROM $this->table ORDER BY id DESC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

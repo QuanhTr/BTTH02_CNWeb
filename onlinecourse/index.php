@@ -52,7 +52,11 @@ switch ($controller) {
         if ($action == "search") $ctrl->search();
         break;
 
-        
+    case 'categories':
+        if ($action == "categories") $ctrl->categories();
+        $controller->categories();
+        break;
+
 
     // ================= DEFAULT =================
     default:
