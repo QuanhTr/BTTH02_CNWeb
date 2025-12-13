@@ -10,40 +10,72 @@ class Category {
         $this->conn = $db->getConnection();
     }
 
-    public function all() {
-        $sql = "SELECT * FROM $this->table ORDER BY id DESC";
-        return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function create($name, $desc) {
-        $sql = "INSERT INTO $this->table (name, description) VALUES (:name,:description)";
-        $st = $this->conn->prepare($sql);
-        return $st->execute([':name'=>$name, ':description'=>$desc]);
-    }
-
-    public function find($id) {
-        $sql = "SELECT * FROM $this->table WHERE id=:id";
-        $st = $this->conn->prepare($sql);
-        $st->execute([':id'=>$id]);
-        return $st->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function update($id,$name,$desc) {
-        $sql = "UPDATE $this->table SET name=:name,description=:description WHERE id=:id";
-        $st = $this->conn->prepare($sql);
-        return $st->execute([':name'=>$name, ':description'=>$desc, ':id'=>$id]);
-    }
-
-    public function delete($id) {
-        $sql = "DELETE FROM $this->table WHERE id=:id";
-        $st = $this->conn->prepare($sql);
-        return $st->execute([':id'=>$id]);
-    }
-
-     public function getAllCategories() {
-        $sql = "SELECT * FROM $this->table ORDER BY id DESC";
+    // ======================
+    // LẤY DANH SÁCH
+    // ======================
+    public function getAll() {
+        $sql = "SELECT * FROM {$this->table} ORDER BY id DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    // ======================
+    // KIỂM TRA TỒN TẠI
+    // ======================
+    public function exists($name) {
+        $stmt = $this->conn->prepare(
+            "SELECT id FROM {$this->table} WHERE name = ?"
+        );
+        $stmt->execute([$name]);
+        return $stmt->fetch() ? true : false;
+    }
+
+    // ======================
+    // THÊM
+    // ======================
+    public function add($name) {
+        $stmt = $this->conn->prepare(
+            "INSERT INTO {$this->table} (name) VALUES (?)"
+        );
+        return $stmt->execute([$name]);
+    }
+
+    // ======================
+    // LẤY THEO ID
+    // ======================
+    public function getById($id) {
+        $stmt = $this->conn->prepare(
+            "SELECT * FROM {$this->table} WHERE id = ?"
+        );
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // ======================
+    // CẬP NHẬT
+    // ======================
+    public function update($id, $name) {
+        $stmt = $this->conn->prepare(
+            "UPDATE {$this->table} SET name = ? WHERE id = ?"
+        );
+        return $stmt->execute([$name, $id]);
+    }
+
+    // ======================
+    // XÓA
+    // ======================
+    public function delete($id) {
+        $stmt = $this->conn->prepare(
+            "DELETE FROM {$this->table} WHERE id = ?"
+        );
+        return $stmt->execute([$id]);
+    }
+
+    public function countCategories() {
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM categories");
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
 }

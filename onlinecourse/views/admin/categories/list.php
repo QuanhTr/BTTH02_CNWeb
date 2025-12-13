@@ -2,7 +2,6 @@
 
 <div class="container mt-4">
     <h2>Danh mục khóa học</h2>
-    <a href="index.php?controller=admin&action=addCategory" class="btn btn-primary mb-3">+ Thêm danh mục</a>
     <hr>
 
     <table class="table table-bordered">

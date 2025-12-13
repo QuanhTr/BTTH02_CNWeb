@@ -108,7 +108,7 @@
         <div class="col-md-4">
             <div class="stat-card accent-green">
                 <div class="stat-title">Khóa học</div>
-                <div class="stat-value"><?= $courseCount ?></div>
+                <div class="stat-value"><?= $categoryCount ?></div>
                 <a href="index.php?controller=admin&action=categories" class="btn btn-outline-success stat-btn">
                     Xem danh sách
                 </a>

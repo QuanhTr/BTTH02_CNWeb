@@ -26,7 +26,7 @@ class AdminController {
         $totalActive    = $this->userModel->countActiveUsers();
         $totalInactive  = $this->userModel->countInactiveUsers();
         
-         $courseCount    = $this->courseModel->countCourses();  
+        $categoryCount  = $this->categoryModel->countCategories();  
         $totalCourses   = $this->courseModel->countCourses();
         $pendingCourses = $this->courseModel->countPendingCourses();
 
@@ -105,9 +105,10 @@ class AdminController {
     // 3. QUẢN LÝ DANH MỤC KHÓA HỌC
     // ============================================================
     public function categories() {
-        $categories = $this->categoryModel->getAllCategories();
+        $categories = $this->categoryModel->getAll();
         include "views/admin/categories/list.php";
     }
+
 
     public function addCategory() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {

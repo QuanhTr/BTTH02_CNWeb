@@ -86,7 +86,7 @@ if(!$user || $user['role'] != 2){
         </li>
 
         <li>
-            <a href="index.php?controller=category&action=index"
+            <a href="index.php?controller=admin&action=categories"
                class="<?= ($_GET['controller'] ?? '') == 'category' ? 'active' : '' ?>">
                 <i class="bi bi-tags-fill"></i> Danh mục khóa học
             </a>

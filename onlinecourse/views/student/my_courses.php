@@ -1,25 +1,31 @@
-<h2>Khóa học đã đăng ký</h2>
+<?php include __DIR__ . "/../layouts/header.php"; ?>
 
-<?php if (empty($courses)): ?>
-    <p>Bạn chưa đăng ký khóa học nào.</p>
-<?php else: ?>
-    <ul>
-        <?php foreach ($courses as $course): ?>
-            <li>
-                <strong><?= $course['title'] ?></strong><br>
-                Giảng viên: <?= $course['instructor_name'] ?><br>
+<div class="container mt-4">
+    <h2>📚 Khóa học của tôi</h2>
+    <hr>
 
-                <a href="index.php?controller=course&action=detail&id=<?= $course['id'] ?>">
-                    Xem khóa học
-                </a> |
-                <a href="index.php?controller=lesson&action=index&course_id=<?= $course['id'] ?>">
-                    Xem bài học
-                </a> |
-                <a href="index.php?controller=student&action=progress&course_id=<?= $course['id'] ?>">
-                    Tiến độ
-                </a>
-            </li>
-            <hr>
-        <?php endforeach; ?>
-    </ul>
-<?php endif; ?>
+    <?php if (empty($courses)): ?>
+        <p>Bạn chưa đăng ký khóa học nào.</p>
+    <?php else: ?>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Khóa học</th>
+                    <th>Tiến độ</th>
+                    <th>Ngày đăng ký</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($courses as $c): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($c['title']) ?></td>
+                        <td><?= $c['progress'] ?>%</td>
+                        <td><?= $c['enrolled_date'] ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+</div>
+
+<?php include __DIR__ . "/../layouts/footer.php"; ?>
