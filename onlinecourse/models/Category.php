@@ -10,6 +10,13 @@ class Category {
         $this->conn = $db->getConnection();
     }
 
+    public function countCategories() {
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM categories");
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
+
     public function all() {
         $sql = "SELECT * FROM $this->table ORDER BY id DESC";
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);

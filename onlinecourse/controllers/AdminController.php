@@ -26,7 +26,8 @@ class AdminController {
         $totalActive    = $this->userModel->countActiveUsers();
         $totalInactive  = $this->userModel->countInactiveUsers();
         
-         $courseCount    = $this->courseModel->countCourses();  
+        $categoryCount = $this->categoryModel->countCategories();
+        $courseCount    = $this->courseModel->countCourses();  
         $totalCourses   = $this->courseModel->countCourses();
         $pendingCourses = $this->courseModel->countPendingCourses();
 
