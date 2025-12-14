@@ -65,17 +65,17 @@ class LessonController {
             die("Phương thức không hợp lệ");
         }
 
-        $data = [
-            'course_id' => $_POST['course_id'],
-            'title'     => $_POST['title'],
-            'content'   => $_POST['content'],
-            'video_url' => $_POST['video_url'],
-            'order'     => $_POST['order']
-        ];
+        // Lấy dữ liệu từ form
+        $course_id = $_POST['course_id'];
+        $title     = $_POST['title'];
+        $content   = $_POST['content'];
+        $video_url = $_POST['video_url'];
+        $order     = $_POST['order'];
 
-        $this->lessonModel->create($data);
+        // Gọi create với 5 tham số riêng lẻ
+        $this->lessonModel->create($course_id, $title, $content, $video_url, $order);
 
-        header("Location: index.php?controller=lesson&action=manage&course_id=".$data['course_id']);
+        header("Location: index.php?controller=lesson&action=manage&course_id=".$course_id);
         exit;
     }
 
@@ -101,18 +101,17 @@ class LessonController {
             die("Phương thức không hợp lệ");
         }
 
-        $id = $_GET['id'];
+        $id        = $_GET['id'];
+        $course_id = $_POST['course_id'];
 
-        $data = [
-            'title'     => $_POST['title'],
-            'content'   => $_POST['content'],
-            'video_url' => $_POST['video_url'],
-            'order'     => $_POST['order']
-        ];
+        $title     = $_POST['title'];
+        $content   = $_POST['content'];
+        $video_url = $_POST['video_url'];
+        $order     = $_POST['order'];
 
-        $this->lessonModel->update($id, $data);
+        $this->lessonModel->update($id, $title, $content, $video_url, $order);
 
-        header("Location: index.php?controller=lesson&action=manage&course_id=".$_POST['course_id']);
+        header("Location: index.php?controller=lesson&action=manage&course_id=".$course_id);
         exit;
     }
 

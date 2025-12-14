@@ -108,37 +108,44 @@
                                             ? '<span class="badge bg-success">Đã duyệt</span>'
                                             : '<span class="badge bg-warning text-dark">Chờ duyệt</span>' ?>
                                     </td>
-                                    <td class="text-center">
-                                        <div class="d-flex flex-column gap-1">
+                                   <td class="text-center">
+                                        <div class="d-flex flex-wrap justify-content-center gap-2">
 
-                                            <!-- Sửa & Xóa -->
-                                            <div class="d-flex gap-1 justify-content-center">
+                                            <!-- Nhóm Sửa & Xóa -->
+                                            <div class="d-flex gap-1">
                                                 <a href="index.php?controller=instructor&action=editCourse&id=<?= $c['id'] ?>"
-                                                   class="btn btn-sm btn-warning">
+                                                class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1 px-3 py-1"
+                                                style="border-radius: 8px; transition: 0.2s;">
                                                     ✏ Sửa
                                                 </a>
 
                                                 <a href="index.php?controller=instructor&action=deleteCourse&id=<?= $c['id'] ?>"
-                                                   class="btn btn-sm btn-danger"
-                                                   onclick="return confirm('Bạn chắc chắn muốn xóa?');">
+                                                class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 px-3 py-1"
+                                                onclick="return confirm('Bạn chắc chắn muốn xóa?');"
+                                                style="border-radius: 8px; transition: 0.2s;">
                                                     🗑 Xóa
                                                 </a>
                                             </div>
 
-                                            <!-- Quản lý bài học -->
-                                            <a href="index.php?controller=lesson&action=manage&course_id=<?= $c['id'] ?>"
-                                               class="btn btn-sm btn-success">
-                                                📖 Quản lý bài học
-                                            </a>
+                                            <!-- Nhóm Quản lý Bài học & Tài liệu -->
+                                            <div class="d-flex gap-1 mt-1">
+                                                <a href="index.php?controller=lesson&action=manage&course_id=<?= $c['id'] ?>"
+                                                class="btn btn-sm btn-success d-flex align-items-center gap-1 px-3 py-1"
+                                                style="border-radius: 8px; transition: 0.2s;">
+                                                    📖 Bài học
+                                                </a>
 
-                                            <!-- Quản lý tài liệu -->
-                                            <a href="index.php?controller=lesson&action=materials&course_id=<?= $c['id'] ?>"
-                                               class="btn btn-sm btn-warning text-white">
-                                                📎 Quản lý tài liệu
-                                            </a>
+                                                <a href="index.php?controller=lesson&action=materials&course_id=<?= $c['id'] ?>"
+                                                class="btn btn-sm btn-warning text-white d-flex align-items-center gap-1 px-3 py-1"
+                                                style="border-radius: 8px; transition: 0.2s;">
+                                                    📎 Tài liệu
+                                                </a>
+                                            </div>
 
                                         </div>
                                     </td>
+
+
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
