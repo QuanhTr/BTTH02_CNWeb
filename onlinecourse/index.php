@@ -6,6 +6,8 @@ $action     = $_GET['action'] ?? 'index';
 
 switch ($controller) {
 
+    
+
     // ================= HOME =================
     case "home":
         require_once "controllers/HomeController.php";
@@ -57,8 +59,34 @@ switch ($controller) {
         $controller->categories();
         break;
 
+    case "student":
+        require_once "controllers/StudentController.php";
+        $ctrl = new StudentController();
+
+        if ($action == "dashboard") {
+            $ctrl->dashboard();
+        } elseif ($action == "myCourses") {
+            $ctrl->myCourses();
+        } elseif ($action == "courseProgress") {
+            $ctrl->courseProgress();
+        } else {
+            // action mặc định
+            $ctrl->dashboard();
+        }
+        break;
+
+   case "enroll":
+    require "controllers/EnrollmentController.php";
+    $ctrl = new EnrollmentController();
+    if ($action == "enroll") $ctrl->enroll();
+    if ($action == "myCourses") $ctrl->myCourses();
+    break;
+
 
     // ================= DEFAULT =================
     default:
         die("Controller $controller không tồn tại!");
 }
+
+
+

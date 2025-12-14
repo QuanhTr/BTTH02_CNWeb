@@ -23,6 +23,44 @@ class Course {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getByIdWithDetail($id) {
+    $sql = "
+        SELECT 
+            c.*,
+            u.fullname AS instructor_name,
+            cat.name AS category_name
+        FROM courses c
+        LEFT JOIN users u ON c.instructor_id = u.id
+        LEFT JOIN categories cat ON c.category_id = cat.id
+        WHERE c.id = :id
+    ";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindValue(':id', $id);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+
+    public function getApproved($keyword = '', $category_id = null) {
+        $sql = "SELECT * FROM courses WHERE status=1";
+        $params = [];
+
+        if ($keyword) {
+            $sql .= " AND title LIKE ?";
+            $params[] = "%$keyword%";
+        }
+
+        if ($category_id) {
+            $sql .= " AND category_id=?";
+            $params[] = $category_id;
+        }
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
     public function create($title,$description,$instructor_id,$category_id,$price,$duration_weeks,$level) {
         $sql = "INSERT INTO $this->table (title,description,instructor_id,category_id,price,duration_weeks,level) VALUES (:title,:description,:instructor_id,:category_id,:price,:duration_weeks,:level)";
         $stmt = $this->conn->prepare($sql);

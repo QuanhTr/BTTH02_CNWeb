@@ -19,8 +19,11 @@ class CourseController {
 
     // Danh sách khóa học
     public function index() {
-        $courses = $this->courseModel->getAll();
-        include "views/courses/index.php";
+        $keyword = $_GET['keyword'] ?? '';
+        $cat     = $_GET['category'] ?? null;
+
+        $courses = $this->courseModel->getApproved($keyword, $cat);
+        require "views/courses/index.php";
     }
 
     // Tạo khóa học
@@ -88,8 +91,18 @@ class CourseController {
 
     // Chi tiết khóa học
     public function detail() {
-        $id = $_GET['id'];
-        $course = $this->courseModel->getById($id);
-        include "views/courses/detail.php";
+    if (empty($_GET['id'])) {
+        die("Thiếu ID khóa học");
     }
+
+    $courseModel = new Course();
+    $course = $courseModel->getByIdWithDetail($_GET['id']);
+
+    if (!$course) {
+        die("Khóa học không tồn tại");
+    }
+
+    require "views/courses/detail.php";
+}
+
 }

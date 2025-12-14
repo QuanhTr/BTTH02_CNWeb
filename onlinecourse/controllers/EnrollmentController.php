@@ -1,42 +1,55 @@
 <?php
 require_once "models/Enrollment.php";
-require_once "models/Course.php";
 
 class EnrollmentController {
+
     private $enrollmentModel;
-    private $courseModel;
 
     public function __construct() {
-        $this->enrollmentModel = new Enrollment();
-        $this->courseModel = new Course();
-        if(session_status() === PHP_SESSION_NONE){
+        if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+        $this->enrollmentModel = new Enrollment();
     }
 
-    // Đăng ký khóa học
+    // ===============================
+    // ĐĂNG KÝ KHÓA HỌC
+    // ===============================
     public function enroll() {
-        if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 0){
-            echo "Chỉ học viên mới đăng ký khóa học!";
-            exit;
+
+        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 0) {
+            die("Chỉ học viên mới đăng ký khóa học!");
         }
 
-        $course_id = $_GET['course_id'];
-        $student_id = $_SESSION['user_id'];
-        $this->enrollmentModel->enroll($course_id,$student_id);
-        header("Location:index.php?controller=enrollment&action=my_courses");
+        if (!isset($_GET['course_id'])) {
+            die("Thiếu course_id");
+        }
+
+        $course_id  = (int)$_GET['course_id'];
+        $student_id = $_SESSION['user']['id'];
+
+        if ($this->enrollmentModel->isEnrolled($student_id, $course_id)) {
+            die("Bạn đã đăng ký khóa học này rồi!");
+        }
+
+        $this->enrollmentModel->enroll($student_id, $course_id);
+
+        header("Location: index.php?controller=student&action=myCourses");
         exit;
     }
 
-    // Xem khóa học đã đăng ký
-    public function my_courses() {
-        if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 0){
-            echo "Chỉ học viên mới xem được!";
-            exit;
+    // ===============================
+    // KHÓA HỌC ĐÃ ĐĂNG KÝ
+    // ===============================
+    public function myCourses() {
+
+        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 0) {
+            die("Chỉ học viên mới xem được!");
         }
 
-        $student_id = $_SESSION['user_id'];
-        $enrollments = $this->enrollmentModel->getByStudent($student_id);
-        include "views/enrollments/my_courses.php";
+        $student_id = $_SESSION['user']['id'];
+        $courses = $this->enrollmentModel->getMyCourses($student_id);
+
+        include "views/student/my_courses.php";
     }
 }
