@@ -2,6 +2,7 @@
 require_once "config/Database.php";
 
 class Course {
+
     private $conn;
     private $table = "courses";
 
@@ -10,138 +11,143 @@ class Course {
         $this->conn = $db->getConnection();
     }
 
+    /* =========================================
+        LẤY DANH SÁCH KHÓA HỌC
+    ========================================= */
+
     public function getAll() {
-        $stmt = $this->conn->prepare("SELECT c.*, u.fullname as instructor_name FROM $this->table c LEFT JOIN users u ON c.instructor_id = u.id");
+        $sql = "SELECT c.*, u.fullname AS instructor_name
+                FROM courses c
+                LEFT JOIN users u ON c.instructor_id = u.id";
+        $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /* =========================================
+        LẤY KHÓA HỌC THEO ID
+    ========================================= */
+
     public function getById($id) {
-        $stmt = $this->conn->prepare("SELECT * FROM $this->table WHERE id=:id");
-        $stmt->bindValue(':id',$id);
-        $stmt->execute();
+        $sql = "SELECT * FROM courses WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getByIdWithDetail($id) {
-    $sql = "
-        SELECT 
-            c.*,
-            u.fullname AS instructor_name,
-            cat.name AS category_name
-        FROM courses c
-        LEFT JOIN users u ON c.instructor_id = u.id
-        LEFT JOIN categories cat ON c.category_id = cat.id
-        WHERE c.id = :id
-    ";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->bindValue(':id', $id);
-    $stmt->execute();
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
+    /* =========================================
+        TẠO KHÓA HỌC (GIẢNG VIÊN)
+    ========================================= */
 
+    public function create($data) {
+        $sql = "INSERT INTO courses 
+                (title, description, price, duration_weeks, level, category_id, instructor_id, status)
+                VALUES (?,?,?,?,?,?,?,0)";
 
-    public function getApproved($keyword = '', $category_id = null) {
-        $sql = "SELECT * FROM courses WHERE status=1";
-        $params = [];
-
-        if ($keyword) {
-            $sql .= " AND title LIKE ?";
-            $params[] = "%$keyword%";
-        }
-
-        if ($category_id) {
-            $sql .= " AND category_id=?";
-            $params[] = $category_id;
-        }
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute($params);
+
+        return $stmt->execute([
+            $data['title'],
+            $data['description'],
+            $data['price'],
+            $data['duration_weeks'],
+            $data['level'],
+            $data['category_id'],
+            $data['instructor_id']
+        ]);
+    }
+
+    /* =========================================
+        CẬP NHẬT KHÓA HỌC (GIẢNG VIÊN)
+    ========================================= */
+
+    public function update($id, $data) {
+        $sql = "UPDATE courses 
+                SET title = ?,
+                    description = ?,
+                    price = ?,
+                    category_id = ?,
+                    duration_weeks = ?,
+                    level = ?
+                WHERE id = ?";
+
+        $stmt = $this->conn->prepare($sql);
+
+        return $stmt->execute([
+            $data['title'],
+            $data['description'],
+            $data['price'],
+            $data['category_id'],
+            $data['duration_weeks'],
+            $data['level'],
+            $id
+        ]);
+    }
+
+    /* =========================================
+        XÓA KHÓA HỌC
+    ========================================= */
+
+    public function delete($id) {
+        $sql = "DELETE FROM courses WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([$id]);
+    }
+
+    /* =========================================
+        KHÓA HỌC CỦA GIẢNG VIÊN
+    ========================================= */
+
+    public function getByInstructor($instructorId) {
+        $sql = "SELECT * FROM courses WHERE instructor_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$instructorId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /* =========================================
+        DUYỆT KHÓA HỌC (ADMIN)
+    ========================================= */
 
-    public function create($title,$description,$instructor_id,$category_id,$price,$duration_weeks,$level) {
-        $sql = "INSERT INTO $this->table (title,description,instructor_id,category_id,price,duration_weeks,level) VALUES (:title,:description,:instructor_id,:category_id,:price,:duration_weeks,:level)";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(':title',$title);
-        $stmt->bindValue(':description',$description);
-        $stmt->bindValue(':instructor_id',$instructor_id);
-        $stmt->bindValue(':category_id',$category_id);
-        $stmt->bindValue(':price',$price);
-        $stmt->bindValue(':duration_weeks',$duration_weeks);
-        $stmt->bindValue(':level',$level);
-        return $stmt->execute();
-    }
-
-    public function update($id,$title,$description,$category_id,$price,$duration_weeks,$level) {
-        $sql = "UPDATE $this->table SET title=:title,description=:description,category_id=:category_id,price=:price,duration_weeks=:duration_weeks,level=:level WHERE id=:id";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(':title',$title);
-        $stmt->bindValue(':description',$description);
-        $stmt->bindValue(':category_id',$category_id);
-        $stmt->bindValue(':price',$price);
-        $stmt->bindValue(':duration_weeks',$duration_weeks);
-        $stmt->bindValue(':level',$level);
-        $stmt->bindValue(':id',$id);
-        return $stmt->execute();
-    }
-
-    public function delete($id) {
-        $stmt = $this->conn->prepare("DELETE FROM $this->table WHERE id=:id");
-        $stmt->bindValue(':id',$id);
-        return $stmt->execute();
-    }
-
-    // Lấy danh sách khóa học đang chờ duyệt
     public function getPending() {
-    $stmt = $this->conn->prepare("SELECT * FROM courses WHERE status = 0");
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+        $sql = "SELECT * FROM courses WHERE status = 0";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-public function updateStatus($id, $status) {
-    $stmt = $this->conn->prepare("UPDATE courses SET status = :status WHERE id = :id");
-    return $stmt->execute([
-        ':status' => $status,
-        ':id' => $id
-    ]);
-}
+    public function updateStatus($id, $status) {
+        $sql = "UPDATE courses SET status = ? WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([$status, $id]);
+    }
 
-public function deleteCourse($id) {
-    $stmt = $this->conn->prepare("DELETE FROM courses WHERE id = :id");
-    return $stmt->execute([':id' => $id]);
-}
+    public function deleteCourse($id) {
+        $sql = "DELETE FROM courses WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([$id]);
+    }
 
+    /* =========================================
+        THỐNG KÊ (ADMIN)
+    ========================================= */
 
-    /* --------------------------------
-        THỐNG KÊ KHÓA HỌC
---------------------------------- */
+    public function countCourses() {
+        $sql = "SELECT COUNT(*) FROM courses";
+        return $this->conn->query($sql)->fetchColumn();
+    }
 
-public function countCourses() {
-    $sql = "SELECT COUNT(*) AS total FROM courses";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->execute();
-    return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
-}
+    public function countPendingCourses() {
+        $sql = "SELECT COUNT(*) FROM courses WHERE status = 0";
+        return $this->conn->query($sql)->fetchColumn();
+    }
 
-public function countActiveCourses() {
-    $sql = "SELECT COUNT(*) AS total FROM courses";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->execute();
-    return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
-}
-
-public function countInactiveCourses() {
-    return 0; // Bảng không có cột role
-}
-
-public function countPendingCourses() {
-    $stmt = $this->conn->prepare("SELECT COUNT(*) AS total FROM courses WHERE status = 0");
-    $stmt->execute();
-    return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
-}
-
-
+    public function countByCategory($categoryId) {
+        $sql = "SELECT COUNT(*) FROM courses WHERE category_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$categoryId]);
+        return $stmt->fetchColumn();
+    }
 
 }

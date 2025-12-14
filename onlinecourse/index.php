@@ -12,16 +12,20 @@ switch ($controller) {
     case "home":
         require_once "controllers/HomeController.php";
         $ctrl = new HomeController();
-        if ($action == "index") $ctrl->index();
+        if ($action === "index") {
+            $ctrl->index();
+        }
         break;
 
     // ================= AUTH =================
     case "auth":
         require_once "controllers/AuthController.php";
         $ctrl = new AuthController();
-        if ($action == "login") $ctrl->login();
-        if ($action == "register") $ctrl->register();
-        if ($action == "logout") $ctrl->logout();
+
+        if ($action === "login") $ctrl->login();
+        elseif ($action === "register") $ctrl->register();
+        elseif ($action === "logout") $ctrl->logout();
+        else die("Action auth không tồn tại");
         break;
 
     // ================= ADMIN =================
@@ -29,59 +33,75 @@ switch ($controller) {
         require_once "controllers/AdminController.php";
         $ctrl = new AdminController();
 
-        if ($action == "dashboard") $ctrl->dashboard();
-        if ($action == "users") $ctrl->users();
-        if ($action == "changeRole") $ctrl->changeRole();
-        if ($action == "toggleActive") $ctrl->toggleActive();
-        if ($action == "userDetail") $ctrl->userDetail();
+        if ($action === "dashboard") $ctrl->dashboard();
+        elseif ($action === "users") $ctrl->users();
+        elseif ($action === "changeRole") $ctrl->changeRole();
+        elseif ($action === "toggleActive") $ctrl->toggleActive();
+        elseif ($action === "userDetail") $ctrl->userDetail();
 
-        if ($action == "categories") $ctrl->categories();
-        if ($action == "addCategory") $ctrl->addCategory();
-        if ($action == "editCategory") $ctrl->editCategory();
-        if ($action == "deleteCategory") $ctrl->deleteCategory();
+        elseif ($action === "categories") $ctrl->categories();
+        elseif ($action === "addCategory") $ctrl->addCategory();
+        elseif ($action === "editCategory") $ctrl->editCategory();
+        elseif ($action === "deleteCategory") $ctrl->deleteCategory();
 
-        if ($action == "pendingCourses") $ctrl->pendingCourses();
-        if ($action == "approveCourse") $ctrl->approveCourse();
-        if ($action == "rejectCourse") $ctrl->rejectCourse();
+        elseif ($action === "pendingCourses") $ctrl->pendingCourses();
+        elseif ($action === "approveCourse") $ctrl->approveCourse();
+        elseif ($action === "rejectCourse") $ctrl->rejectCourse();
+
+        else die("Action admin không tồn tại");
         break;
 
     // ================= COURSE =================
     case "course":
         require_once "controllers/CourseController.php";
         $ctrl = new CourseController();
-        if ($action == "index") $ctrl->index();
-        if ($action == "detail") $ctrl->detail();
-        if ($action == "search") $ctrl->search();
+
+        if ($action === "index") $ctrl->index();
+        elseif ($action === "detail") $ctrl->detail();
+        elseif ($action === "search") $ctrl->search();
+        else die("Action course không tồn tại");
         break;
 
-    case 'categories':
-        if ($action == "categories") $ctrl->categories();
-        $controller->categories();
-        break;
+    // ================= INSTRUCTOR =================
+    case "instructor":
+        require_once "controllers/InstructorController.php";
+        $ctrl = new InstructorController();
 
-    case "student":
-        require_once "controllers/StudentController.php";
-        $ctrl = new StudentController();
+        if ($action === "dashboard") $ctrl->dashboard();
+        elseif ($action === "myCourses") $ctrl->myCourses();
+        elseif ($action === "list") $ctrl->list();
 
-        if ($action == "dashboard") {
-            $ctrl->dashboard();
-        } elseif ($action == "myCourses") {
-            $ctrl->myCourses();
-        } elseif ($action == "courseProgress") {
-            $ctrl->courseProgress();
-        } else {
-            // action mặc định
-            $ctrl->dashboard();
+        // ====== THÊM KHÓA HỌC ======
+        elseif ($action === "create") $ctrl->create();
+        elseif ($action === "store") $ctrl->store();
+
+        // ====== SỬA KHÓA HỌC ======
+        elseif ($action === "editCourse") $ctrl->editCourse();
+        elseif ($action === "updateCourse") $ctrl->updateCourse();
+
+        // ====== XÓA KHÓA HỌC ======
+        elseif ($action === "deleteCourse") $ctrl->deleteCourse();
+
+        // ====== HỌC VIÊN ======
+        elseif ($action === "students") $ctrl->students();
+
+        else {
+            die("Action instructor không tồn tại");
         }
         break;
 
-   case "enroll":
-    require "controllers/EnrollmentController.php";
-    $ctrl = new EnrollmentController();
-    if ($action == "enroll") $ctrl->enroll();
-    if ($action == "myCourses") $ctrl->myCourses();
-    break;
+    case "lesson":
+        require_once "controllers/LessonController.php";
+        $controller = new LessonController();
 
+        if ($action == "manage") $controller->manage();
+        elseif ($action == "create") $controller->create();
+        elseif ($action == "store") $controller->store();
+        elseif ($action == "edit") $controller->edit();
+        elseif ($action == "update") $controller->update();
+        elseif ($action == "delete") $controller->delete();
+        else die("Action lesson không tồn tại");
+        break;
 
     // ================= DEFAULT =================
     default:

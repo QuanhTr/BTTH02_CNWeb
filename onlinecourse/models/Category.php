@@ -9,11 +9,16 @@ class Category {
         $db = new Database();
         $this->conn = $db->getConnection();
     }
-    // ======================
-    // LẤY DANH SÁCH
-    // ======================
+    public function countCategories() {
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM categories");
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
+
+    // ✅ LẤY TẤT CẢ DANH MỤC
     public function getAll() {
-        $sql = "SELECT * FROM {$this->table} ORDER BY id DESC";
+        $sql = "SELECT * FROM categories ORDER BY id DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -71,10 +76,11 @@ class Category {
         return $stmt->execute([$id]);
     }
 
-    public function countCategories() {
-        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM categories");
+     public function getAllCategories() {
+        $sql = "SELECT * FROM $this->table ORDER BY id DESC";
+        $stmt = $this->conn->prepare($sql);
         $stmt->execute();
-        return $stmt->fetchColumn();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
 }

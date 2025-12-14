@@ -26,68 +26,51 @@ class CourseController {
         require "views/courses/index.php";
     }
 
-    // Tạo khóa học
-    public function create() {
-        if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 1){
-            echo "Chỉ giảng viên mới có quyền!";
-            exit;
-        }
+    // GIẢNG VIÊN - TẠO KHÓA HỌC
+public function create() {
+    if ($_SESSION['user']['role'] != 1) die("Không có quyền");
 
-        $categories = (new Category())->getAll();
-        if($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $title = $_POST['title'];
-            $description = $_POST['description'];
-            $category_id = $_POST['category_id'];
-            $price = $_POST['price'];
-            $duration_weeks = $_POST['duration_weeks'];
-            $level = $_POST['level'];
-            $instructor_id = $_SESSION['user_id'];
-
-            $this->courseModel->create($title,$description,$instructor_id,$category_id,$price,$duration_weeks,$level);
-            header("Location:index.php?controller=course&action=index");
-            exit;
-        }
-
-        include "views/courses/create.php";
-    }
-
-    // Edit khóa học
-    public function edit() {
-        if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 1){
-            echo "Chỉ giảng viên mới có quyền!";
-            exit;
-        }
-
-        $id = $_GET['id'];
-        $course = $this->courseModel->getById($id);
-        $categories = (new Category())->getAll();
-
-        if($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $title = $_POST['title'];
-            $description = $_POST['description'];
-            $category_id = $_POST['category_id'];
-            $price = $_POST['price'];
-            $duration_weeks = $_POST['duration_weeks'];
-            $level = $_POST['level'];
-            $this->courseModel->update($id,$title,$description,$category_id,$price,$duration_weeks,$level);
-            header("Location:index.php?controller=course&action=index");
-            exit;
-        }
-
-        include "views/courses/edit.php";
-    }
-
-    // Delete khóa học
-    public function delete() {
-        if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 1){
-            echo "Chỉ giảng viên mới có quyền!";
-            exit;
-        }
-        $id = $_GET['id'];
-        $this->courseModel->delete($id);
-        header("Location:index.php?controller=course&action=index");
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $data = [
+            'title' => $_POST['title'],
+            'description' => $_POST['description'],
+            'price' => $_POST['price'],
+            'duration_weeks' => $_POST['duration_weeks'],
+            'level' => $_POST['level'],
+            'category_id' => $_POST['category_id'],
+            'instructor_id' => $_SESSION['user']['id']
+        ];
+        $this->courseModel->create($data);
+        header("Location: index.php?controller=instructor&action=myCourses");
         exit;
     }
+
+    include "views/instructor/course/create.php";
+}
+
+// SỬA KHÓA HỌC
+public function edit() {
+    $id = $_GET['id'];
+    $course = $this->courseModel->getById($id);
+
+    if ($_SESSION['user']['id'] != $course['instructor_id']) die("Không có quyền");
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $this->courseModel->update($id, $_POST);
+        header("Location: index.php?controller=instructor&action=myCourses");
+        exit;
+    }
+
+    include "views/instructor/course/edit.php";
+}
+
+// XÓA KHÓA HỌC
+public function delete() {
+    $id = $_GET['id'];
+    $this->courseModel->deleteCourse($id);
+    header("Location: index.php?controller=instructor&action=myCourses");
+}
+
 
     // Chi tiết khóa học
     public function detail() {
