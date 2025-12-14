@@ -1,23 +1,119 @@
 <?php include "views/layouts/header.php"; ?>
-<h2>Register</h2>
-<form method="POST">
-  <div class="mb-3">
-    <label>Fullname</label>
-    <input type="text" name="fullname" class="form-control" required>
-  </div>
-  <div class="mb-3">
-    <label>Username</label>
-    <input type="text" name="username" class="form-control" required>
-  </div>
-  <div class="mb-3">
-    <label>Email</label>
-    <input type="email" name="email" class="form-control" required>
-  </div>
-  <div class="mb-3">
-    <label>Password</label>
-    <input type="password" name="password" class="form-control" required>
-  </div>
-  <button type="submit" class="btn btn-success">Register</button>
-</form>
-<p class="mt-3">Already have an account? <a href="index.php?controller=auth&action=login">Login</a></p>
+
+<style>
+body {
+    background-color: #f2f5f8;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.auth-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.auth-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+    padding: 40px 35px;
+    width: 100%;
+    max-width: 450px;
+}
+
+.auth-card h2 {
+    text-align: center;
+    color: #0d6efd;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.auth-card .form-label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.auth-card .form-control {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 18px;
+    transition: 0.3s;
+}
+
+.auth-card .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13,110,253,.2);
+    outline: none;
+}
+
+.auth-card .btn-primary {
+    width: 100%;
+    padding: 12px 0;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.auth-card .btn-primary:hover {
+    background: linear-gradient(135deg, #0b5ed7, #0a58ca);
+}
+
+.auth-card .login-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.auth-card .login-footer a {
+    color: #0d6efd;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-card .login-footer a:hover {
+    text-decoration: underline;
+}
+</style>
+
+<div class="auth-page">
+    <div class="auth-card">
+        <h2>Đăng ký</h2>
+
+        <?php if(isset($error)): ?>
+            <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+        <?php endif; ?>
+
+        <form method="POST">
+            <label class="form-label">Họ và tên</label>
+            <input type="text" name="fullname" class="form-control" required>
+
+            <label class="form-label">Tên đăng nhập</label>
+            <input type="text" name="username" class="form-control" required>
+
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" required>
+
+            <label class="form-label">Mật khẩu</label>
+            <input type="password" name="password" class="form-control" required>
+
+            <button type="submit" class="btn btn-primary">Đăng ký</button>
+        </form>
+
+        <div class="login-footer">
+            Bạn đã có tài khoản? 
+            <a href="index.php?controller=auth&action=login">Đăng nhập</a>
+        </div>
+    </div>
+</div>
+
 <?php include "views/layouts/footer.php"; ?>
