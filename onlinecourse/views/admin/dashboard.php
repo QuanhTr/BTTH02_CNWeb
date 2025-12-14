@@ -108,10 +108,11 @@
         <div class="col-md-4">
             <div class="stat-card accent-green">
                 <div class="stat-title">Khóa học</div>
-                <div class="stat-value"><?= $courseCount ?></div>
-                <a href="index.php?controller=admin&action=approveCourses" class="btn btn-outline-success stat-btn">
-                    Duyệt khóa học
+                <div class="stat-value"><?= $categoryCount ?></div>
+                <a href="index.php?controller=admin&action=categories" class="btn btn-outline-success stat-btn">
+                    Xem danh mục
                 </a>
+
                 <i class="bi bi-journal-bookmark-fill stat-icon"></i>
             </div>
         </div>
@@ -122,7 +123,7 @@
                 <div class="stat-title">Khóa học chờ duyệt</div>
                 <div class="stat-value"><?= $pendingCourses ?></div>
                 <a href="index.php?controller=admin&action=pendingCourses" class="btn btn-outline-warning stat-btn">
-                    Xem danh sách
+                    Duyệt khóa học
                 </a>
                 <i class="bi bi-hourglass-split stat-icon"></i>
             </div>

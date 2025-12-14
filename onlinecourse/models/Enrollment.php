@@ -18,10 +18,15 @@ class Enrollment {
         return $stmt->execute();
     }
 
-    public function getByStudent($student_id) {
-        $stmt = $this->conn->prepare("SELECT e.*, c.title FROM $this->table e LEFT JOIN courses c ON e.course_id=c.id WHERE student_id=:student_id");
-        $stmt->bindValue(':student_id',$student_id);
-        $stmt->execute();
+    public function getStudentsByCourse($courseId) {
+        $stmt = $this->conn->prepare(
+            "SELECT u.fullname, e.progress
+            FROM enrollments e
+            JOIN users u ON e.student_id = u.id
+            WHERE e.course_id=?"
+        );
+        $stmt->execute([$courseId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
 }

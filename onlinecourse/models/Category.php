@@ -10,9 +10,19 @@ class Category {
         $this->conn = $db->getConnection();
     }
 
-    public function all() {
-        $sql = "SELECT * FROM $this->table ORDER BY id DESC";
-        return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    public function countCategories() {
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM categories");
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
+
+    // ✅ LẤY TẤT CẢ DANH MỤC
+    public function getAll() {
+        $sql = "SELECT * FROM categories ORDER BY id DESC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function create($name, $desc) {
@@ -38,5 +48,12 @@ class Category {
         $sql = "DELETE FROM $this->table WHERE id=:id";
         $st = $this->conn->prepare($sql);
         return $st->execute([':id'=>$id]);
+    }
+
+     public function getAllCategories() {
+        $sql = "SELECT * FROM $this->table ORDER BY id DESC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

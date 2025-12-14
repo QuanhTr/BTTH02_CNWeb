@@ -16,6 +16,13 @@ class Lesson {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    // Lấy bài học theo ID
+    public function getById($id) {
+        $sql = "SELECT * FROM lessons WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     public function create($course_id,$title,$content,$video_url,$order) {
         $sql = "INSERT INTO $this->table (course_id,title,content,video_url,`order`) VALUES (:course_id,:title,:content,:video_url,:order)";
@@ -26,5 +33,27 @@ class Lesson {
         $stmt->bindValue(':video_url',$video_url);
         $stmt->bindValue(':order',$order);
         return $stmt->execute();
+    }
+
+    // Cập nhật bài học
+    public function update($id, $data) {
+        $sql = "UPDATE lessons
+                SET title=?, content=?, video_url=?, `order`=?
+                WHERE id=?";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            $data['title'],
+            $data['content'],
+            $data['video_url'],
+            $data['order'],
+            $id
+        ]);
+    }
+
+    // Xóa bài học
+    public function delete($id) {
+        $sql = "DELETE FROM lessons WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([$id]);
     }
 }

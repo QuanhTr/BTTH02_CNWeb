@@ -26,7 +26,8 @@ class AdminController {
         $totalActive    = $this->userModel->countActiveUsers();
         $totalInactive  = $this->userModel->countInactiveUsers();
         
-         $courseCount    = $this->courseModel->countCourses();  
+        $categoryCount = $this->categoryModel->countCategories();
+        $courseCount    = $this->courseModel->countCourses();  
         $totalCourses   = $this->courseModel->countCourses();
         $pendingCourses = $this->courseModel->countPendingCourses();
 
@@ -61,6 +62,18 @@ class AdminController {
         exit;
     }
 
+    public function toggleUser() {
+        if (!isset($_GET['id'])) return;
+
+        require_once "models/User.php";
+        $userModel = new User();
+        $userModel->toggleActive($_GET['id']);
+
+        header("Location: index.php?controller=admin&action=users");
+        exit;
+    }
+
+
     public function toggleActive() {
         if (empty($_POST['id'])) {
             die("Thiếu ID user.");
@@ -93,8 +106,8 @@ class AdminController {
     // 3. QUẢN LÝ DANH MỤC KHÓA HỌC
     // ============================================================
     public function categories() {
-        $categories = $this->categoryModel->getAll();
-        include "views/admin/category/manage.php";
+        $categories = $this->categoryModel->getAllCategories();
+        include "views/admin/categories/list.php";
     }
 
     public function addCategory() {
@@ -175,13 +188,12 @@ class AdminController {
     }
 
     public function rejectCourse() {
-        if (empty($_GET['id'])) die("Thiếu ID khóa học");
+    $id = $_GET['id'];
 
-        $course = $this->courseModel->getById($_GET['id']);
-        if (!$course) die("Khóa học không tồn tại.");
+    $this->courseModel->deleteCourse($id);
 
-        $this->courseModel->updateStatus($_GET['id'], -1);
-        header("Location: index.php?controller=admin&action=pendingCourses");
-        exit;
-    }
+    header("Location: index.php?controller=admin&action=pendingCourses");
+    exit();
+}
+
 }

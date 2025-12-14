@@ -36,7 +36,7 @@ class AuthController {
             }
 
             // Nếu sai
-            $error = "Sai tài khoản hoặc mật khẩu!";
+            $error = "Sai tài khoản hoặc mật khẩu hoặc tài khoản đã bị khóa";
         }
 
         include "views/auth/login.php";

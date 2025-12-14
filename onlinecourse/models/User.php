@@ -13,43 +13,51 @@ class User {
     /* -----------------------------
         ĐĂNG KÝ
     ------------------------------ */
-   public function register($username, $email, $password, $fullname, $role = 0)
-{
-    $sql = "INSERT INTO $this->table 
-            (username, email, password, fullname, role, created_at)
-            VALUES (:username, :email, :password, :fullname, :role, :created_at)";
+   public function register($username,$email,$password,$fullname,$role=0) {
+    $sql = "INSERT INTO $this->table (username, email, password, fullname, role, active, created_at)
+            VALUES (:username, :email, :password, :fullname, :role, 1, NOW())";
 
     $stmt = $this->conn->prepare($sql);
-
     return $stmt->execute([
-        ':username'   => $username,
-        ':email'      => $email,
-        ':password'   => password_hash($password, PASSWORD_DEFAULT),
-        ':fullname'   => $fullname,
-        ':role'       => $role,
-        ':created_at' => date('Y-m-d H:i:s')
+        ':username' => $username,
+        ':email'    => $email,
+        ':password' => password_hash($password, PASSWORD_DEFAULT),
+        ':fullname' => $fullname,
+        ':role'     => $role
     ]);
 }
+
 
 
     /* -----------------------------
         ĐĂNG NHẬP
     ------------------------------ */
-    public function login($usernameOrEmail,$password) {
-        $sql = "SELECT * FROM $this->table 
-                WHERE username=:ue OR email=:ue LIMIT 1";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([':ue'=>$usernameOrEmail]);
+   public function login($usernameOrEmail, $password) {
+    $sql = "SELECT * FROM users 
+            WHERE (username = :ue OR email = :ue)
+            LIMIT 1";
 
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([':ue' => $usernameOrEmail]);
 
-        if (!$user) return false;
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (password_verify($password,$user['password'])) {
-            return $user;
-        }
-        return false;
+    if (!$user) {
+        return false; // Không tìm thấy user
     }
+
+    // Kiểm tra khóa tài khoản
+    if (isset($user['active']) && $user['active'] == 0) {
+        return "inactive"; // hoặc return false
+    }
+
+    // Kiểm tra mật khẩu
+    if (password_verify($password, $user['password'])) {
+        return $user;
+    }
+
+    return false;
+}
 
     /* -----------------------------
         LẤY 1 USER
@@ -115,19 +123,20 @@ class User {
     /* -----------------------------
         BẬT / TẮT USER
     ------------------------------ */
-    public function toggleActive($id) {
-        $user = $this->getUserById($id);
-        if (!$user) return false;
+   public function toggleActive($id) {
+    $user = $this->getUserById($id);
+    if (!$user) return false;
 
-        $newActive = $user['active'] ? 0 : 1;
+    $newActive = ($user['active'] == 1) ? 0 : 1;
 
-        $sql = "UPDATE $this->table SET active=:active WHERE id=:id";
-        $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([
-            ':active' => $newActive,
-            ':id' => $id
-        ]);
-    }
+    $sql = "UPDATE $this->table SET active=:active WHERE id=:id";
+    $stmt = $this->conn->prepare($sql);
+    return $stmt->execute([
+        ':active' => $newActive,
+        ':id' => $id
+    ]);
+}
+
 
     /* -----------------------------
         THỐNG KÊ — STATIC
